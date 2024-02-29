@@ -1,9 +1,12 @@
 import socket 
 import threading
 import os
+import webbrowser
 
 HOST = socket.gethostbyname(socket.gethostname())
-PORT = 5050
+#clear
+PORT = 4040
+#PORT = 5050 
 
 def server_setup():
     # creates a TPC socket and binds it to the local host
@@ -21,12 +24,15 @@ def handle_client(conn, addr):
     
     request_line =  http_request[0]
     request_method, request_path, request_protocol = request_line.split()
-    # print(f"[method, path, protocol] {request_method} {request_path} {request_protocol}")
+    print(f"[REQUEST LINE] {request_line}")
+    
 
     if request_method == "GET":
-       pass 
-
-
+        requested_file = request_path.split('/')[-1]  # Assuming the path is in the format "/path/to/file.html"
+        filename = 'localhost:'+str(PORT) + request_path
+        webbrowser.open(filename)
+        print(filename)
+        # how to set up routes in a standard way 
 
 def start():
     s = server_setup()
