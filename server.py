@@ -1,7 +1,7 @@
 import socket 
 import threading
+import os
 
-# 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 5050
 
@@ -14,11 +14,19 @@ def server_setup():
     return s
 
 def handle_client(conn, addr):
+    # parse HTTP GET request 
     data = conn.recv(1024)
-    if not data: 
-        break
-    conn.sendall(data)
+    decoded_string = data.decode('utf-8')
+    http_request = decoded_string.splitlines()
     
+    request_line =  http_request[0]
+    request_method, request_path, request_protocol = request_line.split()
+    # print(f"[method, path, protocol] {request_method} {request_path} {request_protocol}")
+
+    if request_method == "GET":
+       pass 
+
+
 
 def start():
     s = server_setup()
@@ -27,7 +35,7 @@ def start():
         conn, addr = s.accept() 
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
+        # print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
 
 def main():
     start()
