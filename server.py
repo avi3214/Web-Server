@@ -3,8 +3,9 @@ import threading
 import os
 
 
-HOST = socket.gethostbyname(socket.gethostname())
+HOST = "127.0.0.1" #socket.gethostbyname(socket.gethostname())
 PORT = 4040
+#print(f"[HOST] {HOST}")
 
 def server_setup():
     # creates a TPC socket and binds it to the local host
@@ -63,11 +64,14 @@ def handle_client(conn, addr):
                     +f"\r\n"
                 ).encode('utf-8') + file_data
         else:
-            response = (
-                    f"HTTP/1.1 404 Not Found\n"
-                    +f"Content-Type: text/html\n"
-                    +f"\r\n"
-                ).encode('utf-8')
+            with open("404.html", 'rb') as not_found_file:
+                file_data = not_found_file.read()
+                response = (
+                        f"HTTP/1.1 404 Not Found\n"
+                        +f"Content-Type: text/html\n"
+                        +f"Content-Length: {len(file_data)}\r\n"
+                        +f"\r\n"
+                    ).encode('utf-8') + file_data
 
         conn.sendall(response)
 
