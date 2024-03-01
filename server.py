@@ -54,8 +54,7 @@ def handle_client(conn, addr):
                 +f"Content-Type: text/html\n"
                 +f"Content-Length: {len(file_list)}\r\n"
                 +f"\r\n"
-            ).encode('utf-8') + file_list
-
+            ).encode('utf-8') + file_list # respond to http request in bytes   
         elif os.path.isfile(requested_file): # check to see if the http requests an actual file
             with open(requested_file, 'rb') as file: # obtain the contents of said file in bytes 
                 file_data = file.read()
@@ -65,7 +64,7 @@ def handle_client(conn, addr):
                     +f"Content-Type: text/html\n"
                     +f"Content-Length: {len(file_data)}\r\n"
                     +f"\r\n"
-                ).encode('utf-8') + file_data
+                ).encode('utf-8') + file_data 
         # check the requested file in a specific page1.html and redirect to page2.html 
         elif requested_file == "http://localhost:6789/page1.html":
             with open("page2.html", 'rb') as redirect_file:
