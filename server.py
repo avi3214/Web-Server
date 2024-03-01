@@ -63,6 +63,15 @@ def handle_client(conn, addr):
                     +f"Content-Length: {len(file_data)}\r\n"
                     +f"\r\n"
                 ).encode('utf-8') + file_data
+        elif requested_file == "http://localhost:6789/page1.html":
+            with open("page2.html", 'rb') as redirect_file:
+                file_data = redirect_file.read()
+                response = (
+                        f"HTTP/1.1 200 OK\n"
+                        +f"Content-Type: text/html\n"
+                        +f"Content-Length: {len(file_data)}\r\n"
+                        +f"\r\n"
+                    ).encode('utf-8') + file_data
         else:
             with open("404.html", 'rb') as not_found_file:
                 file_data = not_found_file.read()
@@ -72,7 +81,7 @@ def handle_client(conn, addr):
                         +f"Content-Length: {len(file_data)}\r\n"
                         +f"\r\n"
                     ).encode('utf-8') + file_data
-
+        
         conn.sendall(response)
 
         #conn.sendall(b"HTTP/1.1 200 OK\n"
