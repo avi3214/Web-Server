@@ -1,10 +1,10 @@
 import socket 
 import threading
 import os
-import webbrowser
+
 
 HOST = socket.gethostbyname(socket.gethostname())
-PORT = 5050
+PORT = 4040
 
 def server_setup():
     # creates a TPC socket and binds it to the local host
@@ -14,6 +14,7 @@ def server_setup():
     print(f"Server listening on {HOST}:{PORT}")
     return s
 
+# returns an HTML page of the local directory 
 def show_directory(path):
     files = "<h1>Directory</h1>"
     for file in path:
@@ -21,18 +22,20 @@ def show_directory(path):
     return files.encode('utf-8')
 
 def handle_client(conn, addr):
-    # parse HTTP GET request 
+    # Receives http request from the web browser 
     data = conn.recv(1024)
+    # data is recieved in bytes
+    # converts bytes into strings 
     decoded_string = data.decode('utf-8')
   
+    # parses the http request 
     http_request = decoded_string.splitlines()
-    
     request_line =  http_request[0]
     request_method, request_path, request_protocol = request_line.split()
-    print(f"[REQUEST LINE]  {request_line}")
-    print(f"[REQUEST PATH]  {request_path}")
+    #print(f"[REQUEST LINE]  {request_line}")
+    #print(f"[REQUEST PATH]  {request_path}")
     
-    response = b""
+    response = f""
     if request_method == "GET":
         # retrieve the local file directory 
         current_directory = os.getcwd()
@@ -59,6 +62,12 @@ def handle_client(conn, addr):
                     +f"Content-Length: {len(file_data)}\r\n"
                     +f"\r\n"
                 ).encode('utf-8') + file_data
+        else:
+            response = (
+                    f"HTTP/1.1 404 Not Found\n"
+                    +f"Content-Type: text/html\n"
+                    +f"\r\n"
+                ).encode('utf-8')
 
         conn.sendall(response)
 
@@ -86,14 +95,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-SOURCES
-https://stackoverflow.com/questions/9752521/sending-utf-8-with-sockets
-https://www.w3schools.com/python/module_os.asp
-https://stackoverflow.com/questions/10114224/how-to-properly-send-http-response-with-python-using-socket-library-only
-https://www.geeksforgeeks.org/python-list-files-in-a-directory/
-https://www.youtube.com/watch?v=3QiPPX-KeSc&t=2211s
-https://hackernoon.com/resolving-typeerror-a-bytes-like-object-is-required-not-str-in-python
-https://www.quora.com/How-do-I-put-HTML-inside-a-Python-string
-"""
